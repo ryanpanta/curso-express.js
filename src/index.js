@@ -5,7 +5,7 @@ const cursoRouter = require("./rotas/curso.js");
 const alunoRouter = require("./rotas/aluno.js");
 
 const app = express();
-
+app.use(express.json());
 app.use(morgan("dev"));
 app.use([professorRouter, cursoRouter, alunoRouter,]);
 

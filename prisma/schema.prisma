@@ -17,6 +17,8 @@ model Aluno {
   u_nome String
   ra String
   matriculas Matricula[]
+  telefones Telefone[]
+  @@unique([ra])
 }
 
 model Professor {
@@ -26,6 +28,15 @@ model Professor {
   u_nome String
   salario Float @default(0)
   cursos Curso[]
+  telefones Telefone[]
+}
+
+model Telefone {
+  telefone String @id 
+  aluno_id Int?
+  professor_id Int? 
+  aluno Aluno? @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  professor Professor? @relation(fields: [professor_id], references: [id], onDelete: Cascade)
 }
 
 model Curso {
@@ -40,7 +51,7 @@ model Curso {
 model Matricula {
   curso_id Int 
   aluno_id Int 
-  progresso Int @default(0)
+  progresso Float
   aluno Aluno @relation(fields: [aluno_id], references: [id], onDelete: Restrict)
   curso Curso @relation(fields: [curso_id],references: [id], onDelete: Restrict)
   @@unique([curso_id, aluno_id], name: "matricula_id")
