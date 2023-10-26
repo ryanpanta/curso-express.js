@@ -54,7 +54,7 @@ model Matricula {
   progresso Float
   aluno Aluno @relation(fields: [aluno_id], references: [id], onDelete: Restrict)
   curso Curso @relation(fields: [curso_id],references: [id], onDelete: Restrict)
-  @@unique([curso_id, aluno_id], name: "matricula_id")
+  @@id([curso_id, aluno_id], name: "matricula_id")
 
 
 }
