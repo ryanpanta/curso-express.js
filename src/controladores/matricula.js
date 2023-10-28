@@ -25,6 +25,18 @@ module.exports = {
     const matriculas = await Service.getAll();
     return res.json(matriculas);
   },
+
+  getByMatricula: async (req, res) => {
+    try {
+      const { idCurso, idAluno } = req.params;
+      const matricula = await Service.getByMatricula(+idCurso, +idAluno);
+      if (!matricula) throw new Error("Matricula não encontrada");
+      return res.json(matricula);
+    } catch (error) {
+      return res.status(404).send(error?.message);
+    }
+  },
+  
   create: async (req, res) => {
     try {
       const matricula = req.body;

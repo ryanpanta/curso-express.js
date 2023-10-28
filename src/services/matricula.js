@@ -1,16 +1,31 @@
 const prisma = require("@prisma/client");
 const prismaClient = new prisma.PrismaClient();
-const { buildTelefonePrismaQuery } = require("../utils");
 
 module.exports = {
   create: async (matricula) => {
+    await prismaClient.aluno.findUniqueOrThrow({
+      where: {
+        id: matricula.aluno_id,
+      },
+    });
+    await prismaClient.curso.findUniqueOrThrow({
+      where: {
+        id: matricula.curso_id,
+      },
+    });
     const matriculaCriado = await prismaClient.matricula.create({
       data: matricula,
     });
     return matriculaCriado;
   },
   getAll: async () => {
-    const matriculas = await prismaClient.matricula.findMany();
+    const matriculas = await prismaClient.matricula.findMany({
+      select: {
+        curso: true,
+        aluno: true,
+        progresso: true,
+      },
+    });
     return matriculas;
   },
   getByCurso: async (idCurso) => {
@@ -19,11 +34,7 @@ module.exports = {
         curso_id: idCurso,
       },
       include: {
-        telefones: {
-          select: {
-            telefone: true,
-          },
-        },
+        aluno: true,
       },
     });
     return matricula;
@@ -31,14 +42,10 @@ module.exports = {
   getByAluno: async (idAluno) => {
     const matricula = await prismaClient.matricula.findMany({
       where: {
-        curso_id: idAluno,
+        aluno_id: idAluno,
       },
       include: {
-        telefones: {
-          select: {
-            telefone: true,
-          },
-        },
+        curso: true,
       },
     });
     return matricula;
@@ -53,5 +60,16 @@ module.exports = {
       },
     });
     return matriculaDeletado;
+  },
+  getByMatricula: async (idCurso, idAluno) => {
+    const matricula = await prismaClient.matricula.findUnique({
+      where: {
+        matricula_id: {
+          aluno_id: idAluno,
+          curso_id: idCurso,
+        },
+      },
+    });
+    return matricula;
   },
 };
